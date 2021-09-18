@@ -70,7 +70,7 @@ client.on('interactionCreate', async interaction => {
         case 'create':
             if (interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_CHANNELS)) {
                 manager.createPrimaryVoice(interaction.guild)
-                interaction.reply(`channel created ?`)
+                interaction.reply(`channel created`)
             } else {
                 await interaction.reply("You don't have the required permissions to create a primary voice channel")
             }
