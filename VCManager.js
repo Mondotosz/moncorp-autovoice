@@ -54,6 +54,7 @@ class VCManager {
       type: 'GUILD_VOICE',
       parent: primary.parentId
     }).then(channel => {
+      channel.setPosition(primary.position + 1)
       user.voice.setChannel(channel.id)
       this.#_content.children.push(channel.id)
       this.#save()
