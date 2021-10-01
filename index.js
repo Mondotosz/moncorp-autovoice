@@ -4,6 +4,7 @@ const config = require("./config.json");
 
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 
 const commands = [{
     name: 'ping',
@@ -23,7 +24,16 @@ const commands = [{
 }, {
     name: 'unlimit',
     description: 'WIP removes limit'
-}];
+},
+new SlashCommandBuilder()
+    .setName("rename")
+    .setDescription("WIP rename voice channel (requires you to be the owner)")
+    .addStringOption(option => option
+        .setName("name")
+        .setDescription("new channel name")
+        .setRequired(true)
+    )
+];
 
 const rest = new REST({ version: '9' }).setToken(config.token);
 
@@ -75,6 +85,16 @@ client.on('interactionCreate', async interaction => {
                 await interaction.reply("You don't have the required permissions to create a primary voice channel")
             }
             break;
+        case 'rename':
+            if(interaction.user.id == "175304617108832256"){
+                interaction.guild.members.cache.get(interaction.user.id).voice.channel.setName(interaction.options.data.find(d => d.name == "name").value,`user ${interaction.user.tag} renamed the channel`)
+                    .then()
+                    .catch(e=> console.log(e))
+                await interaction.reply("done")
+            } else {
+                await interaction.reply("you aren't the owner of this channel")
+            }
+            break
         default: await interaction.reply("This command isn't available yet");
     }
 });

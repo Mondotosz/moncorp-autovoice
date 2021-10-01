@@ -56,7 +56,7 @@ class VCManager {
     }).then(channel => {
       channel.setPosition(primary.position + 1)
       user.voice.setChannel(channel.id)
-      this.#_content.children.push(channel.id)
+      this.#_content.children.push({ id: channel.id, owner: user.id })
       this.#save()
       return true
     })
@@ -64,8 +64,13 @@ class VCManager {
   }
 
   deleteChildrenVoice(channel) {
-    this.#_content.children.splice(this.#_content.children.indexOf(channel.id), 1)
     channel.delete("removing unused voice channel")
+    this.#_content.children.splice(this.#_content.children.map(c => c.id).indexOf(channel.id), 1)
+    this.#save();
+  }
+
+  renameChildVoice(user, name){
+    
   }
 
   update(client) {
@@ -77,9 +82,9 @@ class VCManager {
         updatePersistance = true
       }
     })
-    this.#_content.children.forEach(id => {
+    this.#_content.children.map(c => c.id).forEach(id => {
       if (client.channels.cache.get(id) == null) {
-        this.#_content.children.splice(this.#_content.children.indexOf(id), 1)
+        this.#_content.children.splice(this.#_content.children.map(c => c.id).indexOf(id), 1)
         updatePersistance = true
       }
     })
@@ -95,13 +100,12 @@ class VCManager {
       }
     })
     //Check if channels need to be deleted
-    this.#_content.children.forEach(id => {
+    this.#_content.children.map(c => c.id).forEach(id => {
       let children = client.channels.cache.get(id)
       if (children != null && children?.members.first() == null) {
         this.deleteChildrenVoice(children)
       }
     })
-
 
   }
 }
